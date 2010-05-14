@@ -110,7 +110,7 @@ $.fn.dragscrollable = function( options ) {
             preventDefault: true,
 			dragstart: 'mousedown touchstart',
 			dragcontinue: 'mousemove touchmove',
-			dragend: 'mouseup touchend',
+			dragend: 'mouseup mouseleave touchend',
 			dragMinDistance: 5,
 			namespace: '.ds'
 		},options || {});
