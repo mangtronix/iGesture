@@ -4,6 +4,7 @@
  * Copyright (c) 2009 Miquel Herrera
  *
  * Portions Copyright (c) 2010 Reg Braithwaite
+ *          Copyright (c) 2010 Internet Archive / Michael Ang
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -110,6 +111,7 @@ $.fn.dragscrollable = function( options ) {
 			dragstart: 'mousedown touchstart',
 			dragcontinue: 'mousemove touchmove',
 			dragend: 'mouseup touchend',
+			dragMinDistance: 5,
 			namespace: '.ds'
 		},options || {});
 	
@@ -126,8 +128,9 @@ $.fn.dragscrollable = function( options ) {
 				return false; 
 			}
 			
+			event.data.firstCoord = left_top(event);
 			// Initial coordinates will be the last when dragging
-			event.data.lastCoord = left_top(event); 
+			event.data.lastCoord = event.data.firstCoord;
 			
 			handling_element
 				.bind(settings.dragcontinue, event.data, dragscroll.dragContinueHandler)
@@ -165,7 +168,22 @@ $.fn.dragscrollable = function( options ) {
 			handling_element
 				.unbind(settings.dragcontinue)
 				.unbind(settings.dragend);
-			if (event.data.preventDefault) {
+				
+			// How much did the mouse move total?
+			var delta = {left: Math.abs(event.data.lastCoord.left - event.data.firstCoord.left),
+						 top: Math.abs(event.data.lastCoord.top - event.data.firstCoord.top)};
+			var distance = Math.max(delta.left, delta.top);
+			
+			// Allow event to propage if min distance was not achieved
+			console.log(distance + ' - ' + settings.dragMinDistance);
+			
+			// Trigger 'tap' if did not meet drag distance
+			// $$$ does not differentiate single vs multi-touch
+			if (distance < settings.dragMinDistance) {
+			    $(event.originalEvent.target).trigger('tap');
+			}
+			
+			if (event.data.preventDefault && distance > settings.dragMinDistance) {
                 event.preventDefault();
                 return false;
             }
