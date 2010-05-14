@@ -174,15 +174,13 @@ $.fn.dragscrollable = function( options ) {
 						 top: Math.abs(event.data.lastCoord.top - event.data.firstCoord.top)};
 			var distance = Math.max(delta.left, delta.top);
 			
-			// Allow event to propage if min distance was not achieved
-			console.log(distance + ' - ' + settings.dragMinDistance);
-			
 			// Trigger 'tap' if did not meet drag distance
 			// $$$ does not differentiate single vs multi-touch
 			if (distance < settings.dragMinDistance) {
 			    $(event.originalEvent.target).trigger('tap');
 			}
 			
+			// Allow event to propage if min distance was not achieved
 			if (event.data.preventDefault && distance > settings.dragMinDistance) {
                 event.preventDefault();
                 return false;
